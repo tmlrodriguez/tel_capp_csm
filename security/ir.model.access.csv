@@ -1,0 +1,3 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+savings_type_access,savings.type.access,model_contributions_manager_savings_type,base.group_user,1,1,1,1
+contributions_type_access,contributions.type.access,model_contributions_manager_contributions_type,base.group_user,1,1,1,1

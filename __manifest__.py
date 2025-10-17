@@ -9,8 +9,12 @@
     'category': 'Accounting',
     'depends': ['base', 'accountant', 'mail'],
     'data': [
-        # # Views
-        'views/contrib_savings_manager_menu.xml',
+        # Security
+        'security/ir.model.access.csv',
+        # Views
+        'views/contributions_manager_saving_types_view.xml',
+        'views/contributions_manager_contribution_types_view.xml',
+        'views/contributions_manager_menu.xml',
     ],
     'assets': {
         'web.assets_backend': [

@@ -1,0 +1,104 @@
+<odoo>
+  <!-- ROOT -->
+  <menuitem id="menu_contributions_root"
+            name="ADDICAPP Ahorros"
+            sequence="10"
+            web_icon="tel_capp_csm,static/description/icon.png"/>
+
+    <menuitem id="menu_dashboard"
+            name="Inicio"
+            parent="menu_contributions_root"
+            action="savings_type_action"
+            sequence="1"/>
+
+  <record id="action_contributions_placeholder" model="ir.actions.act_window">
+    <field name="name">Contribuciones</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('id','=',False)]</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        Contributions — placeholder view.
+      </p>
+      <p>Using Odoo’s standard Partner views as a temporary shell.</p>
+    </field>
+  </record>
+  <menuitem id="menu_contributions_entry"
+            name="Contribuciones"
+            parent="menu_contributions_root"
+            action="action_contributions_placeholder"
+            sequence="12"/>
+
+  <record id="action_savings_placeholder" model="ir.actions.act_window">
+    <field name="name">Ahorros</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('id','=',False)]</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        Savings module — placeholder view.
+      </p>
+      <p>This screen uses Odoo’s built-in Partner list/form as a scaffold.</p>
+    </field>
+  </record>
+  <menuitem id="menu_savings_entry"
+            name="Ahorros"
+            parent="menu_contributions_root"
+            action="action_savings_placeholder"
+            sequence="11"/>
+
+  <menuitem id="menu_reporting_root"
+            name="Reporteria"
+            parent="menu_contributions_root"
+            sequence="20"/>
+
+    <record id="action_report_balances" model="ir.actions.act_window">
+    <field name="name">Contribuciones</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">list,form,graph,pivot</field>
+    <field name="domain">[('id','=',False)]</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Balances — placeholder.</p>
+    </field>
+  </record>
+  <menuitem id="menu_reporting_balances"
+            name="Contribuciones"
+            parent="menu_reporting_root"
+            action="action_report_balances"
+            sequence="22"/>
+
+  <record id="action_report_overview" model="ir.actions.act_window">
+    <field name="name">Ahorros</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">list,form,graph,pivot</field>
+    <field name="domain">[('id','=',False)]</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Reporting Overview — placeholder.</p>
+      <p>Graph and Pivot ready when data/models are wired.</p>
+    </field>
+  </record>
+  <menuitem id="menu_reporting_overview"
+            name="Ahorros"
+            parent="menu_reporting_root"
+            action="action_report_overview"
+            sequence="21"/>
+
+  <!-- Configuration  -->
+  <menuitem id="menu_configuration_root"
+            name="Configuracion"
+            parent="menu_contributions_root"
+            sequence="30"/>
+
+  <menuitem id="menu_configuration_savings_types"
+            name="Tipos de Ahorros"
+            parent="menu_configuration_root"
+            action="savings_type_action"
+            sequence="31"/>
+
+  <menuitem id="menu_configuration_contributions_types"
+            name="Tipos de Contribuciones"
+            parent="menu_configuration_root"
+            action="contributions_type_action"
+            sequence="32"/>
+
+</odoo>
