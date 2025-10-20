@@ -1,0 +1,25 @@
+<odoo>
+    <record id="view_partner_contribution_form_popup" model="ir.ui.view">
+        <field name="name">contributions.manager.partner.contribution.form.popup</field>
+        <field name="model">contributions.manager.partner.contribution</field>
+        <field name="arch" type="xml">
+            <form string="Nueva Aportación" create="false" edit="true">
+                <group>
+                    <field name="partner_id" readonly="1" />
+                    <field name="contribution_type_id"
+                           required="1"
+                           options="{'no_create': True, 'no_create_edit': True}"
+                           domain="[('id', 'not in', context.get('exclude_contribution_type_ids', []))]"/>
+                    <field name="deposit_bank_account" readonly="1"/>
+                    <field name="saving_account" readonly="1"/>
+                    <field name="interest_payment_account" readonly="1"/>
+                    <field name="enabled"/>
+                </group>
+                <footer>
+                    <button string="Guardar" type="object" name="action_save_popup" class="btn-primary"/>
+                    <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,74 @@
+<odoo>
+    <record id="view_contribution_tree" model="ir.ui.view">
+        <field name="name">contributions.manager.contribution.tree</field>
+        <field name="model">contributions.manager.contribution</field>
+        <field name="arch" type="xml">
+            <list string="Aportaciones" create="true">
+                <field name="partner_id"/>
+                <field name="contribution_type_id"/>
+                <field name="move_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="date"/>
+                <field name="contribution_status"
+                       widget="badge"
+                       decoration-primary="contribution_status == 'draft'"
+                       decoration-info="contribution_status == 'confirmed'"
+                       decoration-success="contribution_status == 'registered'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_contribution_form" model="ir.ui.view">
+        <field name="name">contributions.manager.contribution.form</field>
+        <field name="model">contributions.manager.contribution</field>
+        <field name="arch" type="xml">
+            <form string="Registrar Aportación">
+                <header>
+                    <button name="action_confirm"
+                            string="Confirmar"
+                            type="object"
+                            class="btn-primary"
+                            confirm="¿Estás seguro de confirmar esta aportación? Una vez confirmada, no podrá modificarse."
+                            invisible="contribution_status != 'draft'"/>
+                    <button name="action_register"
+                            string="Contabilizar"
+                            type="object"
+                            class="btn-primary"
+                            confirm="¿Deseas contabilizar esta aportación? Esto generará un asiento contable oficial."
+                            invisible="contribution_status != 'confirmed'"/>
+                    <field name="contribution_status" widget="statusbar" statusbar_visible="draft,confirmed,registered"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <field name="partner_id"
+                               required="1"
+                               readonly="create_uid"
+                               options="{'no_create': True, 'no_create_edit': True}"/>
+                        <field name="contribution_type_id"
+                               required="1"
+                               readonly="create_uid"
+                               domain="[('id', 'in', allowed_contribution_type_ids)]"
+                               options="{'no_create': True, 'no_create_edit': True}"/>
+                        <field name="amount" required="1" readonly="create_uid"/>
+                        <field name="date" readonly="create_uid"/>
+                        <field name="move_id" readonly="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_contribution" model="ir.actions.act_window">
+        <field name="name">Registro de Aportaciones</field>
+        <field name="res_model">contributions.manager.contribution</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aquí puedes registrar las aportaciones monetarias de los socios a sus tipos de contribución activos.
+            </p>
+        </field>
+    </record>
+</odoo>
