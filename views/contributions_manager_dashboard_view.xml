@@ -1,0 +1,101 @@
+<odoo>
+    <record id="view_partner_contribution_tree_dashboard" model="ir.ui.view">
+        <field name="name">contributions.manager.partner.contribution.tree.dashboard</field>
+        <field name="model">contributions.manager.partner.contribution</field>
+        <field name="arch" type="xml">
+            <list string="Saldos de Aportaciones y Ahorros" create="false" edit="false">
+                <field name="partner_id"/>
+                <field name="contribution_type_id"/>
+                <field name="current_amount" sum="Total"/>
+                <field name="enabled"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_partner_contribution_graph" model="ir.ui.view">
+        <field name="name">contributions.manager.partner.contribution.graph</field>
+        <field name="model">contributions.manager.partner.contribution</field>
+        <field name="arch" type="xml">
+            <graph string="Saldos por Socio" type="bar">
+                <field name="current_amount" type="measure"/>
+                <field name="partner_id" type="row"/>
+                <field name="contribution_type_id" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_partner_contribution_pivot" model="ir.ui.view">
+        <field name="name">contributions.manager.partner.contribution.pivot</field>
+        <field name="model">contributions.manager.partner.contribution</field>
+        <field name="arch" type="xml">
+            <pivot string="Resumen General de Ahorros y Aportaciones">
+                <field name="current_amount" type="measure"/>
+                <field name="partner_id" type="row"/>
+                <field name="contribution_type_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_contribution_dashboard" model="ir.actions.act_window">
+        <field name="name">Panel de Aportaciones</field>
+        <field name="res_model">contributions.manager.partner.contribution</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'group_by': ['partner_id', 'contribution_type_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Panel general de aportaciones y saldos acumulados por socio y tipo de contribución.
+            </p>
+        </field>
+    </record>
+
+    <record id="view_withdrawal_tree_dashboard" model="ir.ui.view">
+        <field name="name">contributions.manager.withdrawal.tree.dashboard</field>
+        <field name="model">contributions.manager.withdrawal</field>
+        <field name="arch" type="xml">
+            <list string="Retiros" create="false" edit="false">
+                <field name="partner_id"/>
+                <field name="contribution_type_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="date"/>
+                <field name="withdrawal_status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_withdrawal_graph_dashboard" model="ir.ui.view">
+        <field name="name">contributions.manager.withdrawal.graph.dashboard</field>
+        <field name="model">contributions.manager.withdrawal</field>
+        <field name="arch" type="xml">
+            <graph string="Retiros Mensuales" type="bar">
+                <field name="amount" type="measure"/>
+                <field name="date" interval="month"/>
+                <field name="contribution_type_id" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_withdrawal_pivot_dashboard" model="ir.ui.view">
+        <field name="name">contributions.manager.withdrawal.pivot.dashboard</field>
+        <field name="model">contributions.manager.withdrawal</field>
+        <field name="arch" type="xml">
+            <pivot string="Resumen General de Retiros">
+                <field name="amount" type="measure"/>
+                <field name="partner_id" type="row"/>
+                <field name="contribution_type_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_withdrawal_dashboard" model="ir.actions.act_window">
+        <field name="name">Panel de Retiros</field>
+        <field name="res_model">contributions.manager.withdrawal</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'group_by': ['partner_id', 'contribution_type_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Panel de análisis de retiros mensuales y totales por socio y tipo de ahorro.
+            </p>
+        </field>
+    </record>
+
+</odoo>
