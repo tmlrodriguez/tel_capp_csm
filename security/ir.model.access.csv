@@ -1,3 +1,5 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
-savings_type_access,savings.type.access,model_contributions_manager_savings_type,base.group_user,1,1,1,1
-contributions_type_access,contributions.type.access,model_contributions_manager_contributions_type,base.group_user,1,1,1,1
+contributions_type_access,contributions.type.access,model_contributions_manager_contribution_type,base.group_user,1,1,1,1
+partner_contribution_access,partner.contribution.access,model_contributions_manager_partner_contribution,base.group_user,1,1,1,1
+contributions_access,contributions.access,model_contributions_manager_contribution,base.group_user,1,1,1,1
+withdrawals_access,withdrawals.access,model_contributions_manager_withdrawal,base.group_user,1,1,1,1
