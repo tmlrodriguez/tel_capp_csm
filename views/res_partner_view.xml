@@ -1,0 +1,43 @@
+<odoo>
+    <record id="view_partner_form_inherit_contributions" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.contributions</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Aportaciones y Ahorros">
+                    <header>
+                        <button name="action_add_contribution"
+                                string="Agregar Aportación"
+                                type="object"
+                                class="btn-primary"
+                                icon="fa-plus"/>
+                    </header>
+                    <field name="contribution_ids" nolabel="1" mode="list,form" context="{'active_test': False}">
+                        <list string="Aportaciones y Ahorros" create="false">
+                            <field name="contribution_type_id"/>
+                            <field name="deposit_bank_account" readonly="1"/>
+                            <field name="saving_account" readonly="1"/>
+                            <field name="interest_payment_account" readonly="1"/>
+                            <field name="current_amount" readonly="1" sum="Total"/>
+                            <field name="enabled"/>
+                        </list>
+                        <form string="Detalle de Aportación">
+                            <group>
+                                <field name="contribution_type_id"
+                                       required="1"
+                                       options="{'no_create': True, 'no_create_edit': True}"
+                                       domain="[('id', 'not in', context.get('exclude_contribution_type_ids', []))]"/>
+                                <field name="deposit_bank_account" readonly="1"/>
+                                <field name="saving_account" readonly="1"/>
+                                <field name="interest_payment_account" readonly="1"/>
+                                <field name="current_amount" readonly="1"/>
+                                <field name="enabled"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
