@@ -28,26 +28,26 @@
             name="Aportaciones y Ahorros"
             parent="menu_contributions_root"
             action="action_contribution"
-            sequence="1"/>
+            sequence="2"/>
 
   <!-- Retiros -->
   <menuitem id="menu_withdrawals_entry"
             name="Retiros"
             parent="menu_contributions_root"
             action="action_withdrawal"
-            sequence="2"/>
+            sequence="3"/>
 
   <!-- Reportes -->
   <menuitem id="menu_reporting_root"
             name="Reporteria"
             parent="menu_contributions_root"
-            sequence="3"/>
+            sequence="4"/>
 
   <!-- Configuracion -->
   <menuitem id="menu_configuration_root"
           name="Configuracion"
           parent="menu_contributions_root"
-          sequence="30"/>
+          sequence="5"/>
 
   <menuitem id="menu_configuration_savings_types"
             name="Tipos de Aportaciones y Ahorros"
