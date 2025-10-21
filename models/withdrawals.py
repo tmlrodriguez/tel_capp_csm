@@ -16,8 +16,7 @@ class Withdrawal(models.Model):
         'res.partner',
         string='Cliente / Asociado',
         required=True,
-        tracking=True,
-        domain=[('customer_rank', '>', 0)]
+        tracking=True
     )
     contribution_type_id = fields.Many2one(
         'contributions.manager.contribution.type',
@@ -86,8 +85,8 @@ class Withdrawal(models.Model):
         for rec in self:
             if rec.withdrawal_status in ('confirmed', 'registered'):
                 continue
-            if rec.amount <= 0:
-                raise ValidationError("El monto del retiro debe ser mayor que 0.")
+            # if rec.amount <= 0:
+            #     raise ValidationError("El monto del retiro debe ser mayor que 0.")
 
             partner_contribution = self.env['contributions.manager.partner.contribution'].search([
                 ('partner_id', '=', rec.partner_id.id),
@@ -135,10 +134,10 @@ class Withdrawal(models.Model):
                 raise ValidationError(
                     "No se encontró la relación activa entre el asociado y el tipo de contribución."
                 )
-            if rec.amount > partner_contribution.current_amount:
-                raise ValidationError(
-                    f"El monto del retiro ({rec.amount}) excede el saldo disponible ({partner_contribution.current_amount})."
-                )
+            # if rec.amount > partner_contribution.current_amount:
+            #     raise ValidationError(
+            #         f"El monto del retiro ({rec.amount}) excede el saldo disponible ({partner_contribution.current_amount})."
+            #     )
             partner_contribution.current_amount -= rec.amount
             rec.write({
                 'move_id': move.id,

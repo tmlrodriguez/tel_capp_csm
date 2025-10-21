@@ -17,11 +17,30 @@ class ContributionsTypes(models.Model):
     interest_rate = fields.Float(string='Tasa de Interés (%)', required=True, tracking=True, help="Tasa de interés anual para este tipo de ahorro.")
     days_per_year = fields.Selection([('360', '360'), ('365', '365'),], string='Dias por Año', required=True, tracking=True)
     calculation_method = fields.Selection([('DAV', 'Promedio Diario'),], string='Metodo de Calculo', required=True, tracking=True)
-    capitalization_date = fields.Selection([('30', '30 de cada mes'),], string='Fecha de Capitalización', required=True, tracking=True)
-    deposit_bank_account = fields.Many2one('account.account', string='Cuenta de Banco Deposito de Ahorros', required=True, tracking=True, domain="[('account_type', 'in', ('asset_current', 'liability_current'))]")
-    saving_account = fields.Many2one('account.account', string='Cuenta de Ahorro de Cliente', required=True, tracking=True, domain="[('account_type', 'in', ('asset_current', 'liability_current'))]")
-    interest_payment_account = fields.Many2one('account.account', required=True, string='Cuenta Gasto por Intereses Pagados', tracking=True, domain="[('account_type', '=', 'expense_financial')]")
-    journal = fields.Many2one('account.journal', string='Diario Contable', required=True, tracking=True, domain="[('type', 'in', ('bank', 'cash', 'general'))]")
+    capitalization_date = fields.Selection([(str(x), '{} de cada mas'.format(x)) for x in range(1, 31)], string='Fecha de Capitalización', required=True, tracking=True)
+    deposit_bank_account = fields.Many2one('account.account', string='Cuenta de Banco Depósito de Ahorros', required=True, tracking=True,
+        domain=[
+            ('code', '=ilike', '1%'),
+            ('account_type', '=', 'asset_cash')
+        ]
+    )
+    saving_account = fields.Many2one('account.account', string='Cuenta de Ahorro de Cliente', required=True, tracking=True,
+        domain=[
+            ('code', '=ilike', '2%'),
+            ('account_type', '=', 'liability_payable')
+        ]
+    )
+    interest_payment_account = fields.Many2one('account.account', required=True, string='Cuenta Gasto por Intereses Pagados', tracking=True,
+        domain=[
+            '|', '|', '|', '|',
+            ('code', '=ilike', '5%'),
+            ('code', '=ilike', '6%'),
+            ('code', '=ilike', '7%'),
+            ('code', '=ilike', '8%'),
+            ('code', '=ilike', '9%')
+        ]
+    )
+    journal = fields.Many2one('account.journal', string='Diario Contable', required=True, tracking=True)
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Empresa',
