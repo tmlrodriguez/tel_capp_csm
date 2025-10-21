@@ -53,6 +53,48 @@ class PartnerContribution(models.Model):
         })
         return {'type': 'ir.actions.act_window_close'}
 
+    def action_view_contributions(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f"Aportaciones de {self.partner_id.name} - {self.contribution_type_id.contribution_name}",
+            'res_model': 'contributions.manager.contribution',
+            'view_mode': 'list',
+            'target': 'new',
+            'domain': [
+                ('partner_id', '=', self.partner_id.id),
+                ('contribution_type_id', '=', self.contribution_type_id.id),
+            ],
+            'context': {
+                'default_partner_id': self.partner_id.id,
+                'default_contribution_type_id': self.contribution_type_id.id,
+                'create': False,
+                'edit': False,
+                'delete': False,
+            },
+        }
+
+    def action_view_withdrawals(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f"Aportaciones de {self.partner_id.name} - {self.contribution_type_id.contribution_name}",
+            'res_model': 'contributions.manager.withdrawal',
+            'view_mode': 'list',
+            'target': 'new',
+            'domain': [
+                ('partner_id', '=', self.partner_id.id),
+                ('contribution_type_id', '=', self.contribution_type_id.id),
+            ],
+            'context': {
+                'default_partner_id': self.partner_id.id,
+                'default_contribution_type_id': self.contribution_type_id.id,
+                'create': False,
+                'edit': False,
+                'delete': False,
+            },
+        }
+
 
 class Contribution(models.Model):
     """
@@ -64,7 +106,7 @@ class Contribution(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'display_name'
 
-    partner_id = fields.Many2one('res.partner', string='Cliente / Asociado', required=True, tracking=True, domain=[('customer_rank', '>', 0)])
+    partner_id = fields.Many2one('res.partner', string='Cliente / Asociado', required=True, tracking=True)
     contribution_type_id = fields.Many2one('contributions.manager.contribution.type', string='Tipo de Contribución', required=True, tracking=True)
     amount = fields.Float(string='Monto de la Aportación', required=True, tracking=True, help="Monto de dinero que el asociado aporta a este tipo de contribución.")
     date = fields.Date(string='Fecha de Aportación', default=fields.Date.context_today, required=True, tracking=True)
@@ -85,20 +127,6 @@ class Contribution(models.Model):
     )
 
     # Overrides
-    @api.model_create_multi
-    def create(self, vals_list):
-        records = super().create(vals_list)
-        for rec in records:
-            partner_contribution = self.env['contributions.manager.partner.contribution'].search([
-                ('partner_id', '=', rec.partner_id.id),
-                ('contribution_type_id', '=', rec.contribution_type_id.id),
-                ('company_id', '=', rec.company_id.id),
-                ('enabled', '=', True)
-            ], limit=1)
-            if partner_contribution:
-                partner_contribution.current_amount += rec.amount
-        return records
-
     def unlink(self):
         raise ValidationError("No se puede eliminar una aportación registrada. Contacte a administración para reversas.")
 
@@ -116,8 +144,8 @@ class Contribution(models.Model):
         for rec in self:
             if rec.contribution_status in ('confirmed', 'registered'):
                 continue
-            if rec.amount <= 0:
-                raise ValidationError("El monto de la aportación debe ser mayor que 0.")
+            # if rec.amount <= 0:
+            #     raise ValidationError("El monto de la aportación debe ser mayor que 0.")
 
             partner_contribution = self.env['contributions.manager.partner.contribution'].search([
                 ('partner_id', '=', rec.partner_id.id),
@@ -135,8 +163,8 @@ class Contribution(models.Model):
     # State Change Methods
     def action_confirm(self):
         for rec in self:
-            if rec.amount <= 0:
-                raise ValidationError("El monto de la aportación debe ser mayor que 0.")
+            # if rec.amount <= 0:
+            #     raise ValidationError("El monto de la aportación debe ser mayor que 0.")
             if rec.contribution_status != 'draft':
                 raise ValidationError("Solo se pueden confirmar aportaciones en estado borrador.")
             rec.write({'contribution_status': 'confirmed'})
