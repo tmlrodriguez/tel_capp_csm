@@ -4,11 +4,13 @@
         <field name="model">contributions.manager.withdrawal</field>
         <field name="arch" type="xml">
             <list string="Retiros" create="true">
+                <field name="reference"/>
                 <field name="partner_id"/>
                 <field name="contribution_type_id"/>
                 <field name="move_id"/>
                 <field name="amount" sum="Total"/>
                 <field name="date"/>
+                <field name="internal_use"/>
                 <field name="withdrawal_status"
                        widget="badge"
                        decoration-primary="withdrawal_status == 'draft'"
@@ -41,6 +43,7 @@
 
                 <sheet>
                     <group>
+                        <field name="reference" readonly="1" />
                         <field name="partner_id"
                                required="1"
                                readonly="create_uid"
@@ -53,6 +56,13 @@
                         <field name="amount" readonly="create_uid" required="1"/>
                         <field name="date" readonly="create_uid"/>
                         <field name="move_id" readonly="1"/>
+                    </group>
+
+                    <group string="Uso Interno" colspan="2">
+                        <field name="internal_use" readonly="create_uid"/>
+                        <field name="invoice_id" readonly="create_uid" invisible="not invoice_id"/>
+                        <field name="payment_id" readonly="create_uid" invisible="not payment_id"/>
+                        <field name="internal_used" readonly="create_uid" invisible="not internal_used"/>
                     </group>
                 </sheet>
                 <chatter/>
