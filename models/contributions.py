@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 import logging
 _logger = logging.getLogger(__name__)
@@ -106,6 +106,7 @@ class Contribution(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'display_name'
 
+    reference = fields.Char(string='Referencia', readonly=True, copy=False, default=lambda self: _('New'), tracking=True)
     partner_id = fields.Many2one('res.partner', string='Cliente / Asociado', required=True, tracking=True)
     contribution_type_id = fields.Many2one('contributions.manager.contribution.type', string='Tipo de Contribución', required=True, tracking=True)
     amount = fields.Float(string='Monto de la Aportación', required=True, tracking=True, help="Monto de dinero que el asociado aporta a este tipo de contribución.")
@@ -127,6 +128,12 @@ class Contribution(models.Model):
     )
 
     # Overrides
+    @api.model
+    def create(self, vals):
+        if vals.get('reference', _('New')) == _('New'):
+            vals['reference'] = self.env['ir.sequence'].next_by_code('contributions.manager.contribution') or _('New')
+        return super(Contribution, self).create(vals)
+
     def unlink(self):
         raise ValidationError("No se puede eliminar una aportación registrada. Contacte a administración para reversas.")
 
@@ -144,8 +151,8 @@ class Contribution(models.Model):
         for rec in self:
             if rec.contribution_status in ('confirmed', 'registered'):
                 continue
-            # if rec.amount <= 0:
-            #     raise ValidationError("El monto de la aportación debe ser mayor que 0.")
+            if rec.amount <= 0:
+                raise ValidationError("El monto de la aportación debe ser mayor que 0.")
 
             partner_contribution = self.env['contributions.manager.partner.contribution'].search([
                 ('partner_id', '=', rec.partner_id.id),
@@ -163,8 +170,8 @@ class Contribution(models.Model):
     # State Change Methods
     def action_confirm(self):
         for rec in self:
-            # if rec.amount <= 0:
-            #     raise ValidationError("El monto de la aportación debe ser mayor que 0.")
+            if rec.amount <= 0:
+                raise ValidationError("El monto de la aportación debe ser mayor que 0.")
             if rec.contribution_status != 'draft':
                 raise ValidationError("Solo se pueden confirmar aportaciones en estado borrador.")
             rec.write({'contribution_status': 'confirmed'})
@@ -210,7 +217,7 @@ class Contribution(models.Model):
             )
 
         move_vals = {
-            'ref': f"{self.partner_id.name} - {contrib_type.contribution_name}",
+            'ref': self.reference,
             'date': self.date,
             'journal_id': journal.id,
             'company_id': self.company_id.id,

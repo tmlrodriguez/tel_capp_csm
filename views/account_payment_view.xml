@@ -1,0 +1,16 @@
+<odoo>
+  <record id="view_account_payment_register_form_inherit_internal_withdrawal" model="ir.ui.view">
+    <field name="name">account.payment.register.form.inherit.internal.withdrawal</field>
+    <field name="model">account.payment.register</field>
+    <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//group[@name='group2']" position="after">
+        <group string="Retiro de Uso Interno" invisible="not journal_internal_use">
+          <field name="internal_withdrawal_id"
+                 required="journal_internal_use"
+                 options="{'no_create': True, 'no_open': False}"/>
+        </group>
+      </xpath>
+    </field>
+  </record>
+</odoo>

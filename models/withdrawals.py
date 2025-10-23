@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
@@ -12,51 +12,20 @@ class Withdrawal(models.Model):
     _inherit = ['mail.thread']
     _rec_name = 'display_name'
 
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Cliente / Asociado',
-        required=True,
-        tracking=True
-    )
-    contribution_type_id = fields.Many2one(
-        'contributions.manager.contribution.type',
-        string='Tipo de Contribución',
-        required=True,
-        tracking=True
-    )
-    amount = fields.Float(
-        string='Monto del Retiro',
-        required=True,
-        tracking=True,
-        help="Monto de dinero que el asociado retira de este tipo de contribución."
-    )
-    date = fields.Date(
-        string='Fecha del Retiro',
-        default=fields.Date.context_today,
-        required=True,
-        tracking=True
-    )
-    company_id = fields.Many2one(
-        'res.company',
-        string='Empresa',
-        required=True,
-        default=lambda self: self.env.company,
-        tracking=True
-    )
-    withdrawal_status = fields.Selection([
-        ('draft', 'Borrador'),
-        ('confirmed', 'Confirmado'),
-        ('registered', 'Contabilizado')
-    ], string='Estado', required=True, default='draft', readonly=True, tracking=True)
+    reference = fields.Char(string='Referencia', readonly=True, copy=False, default=lambda self: _('New'), tracking=True)
+    partner_id = fields.Many2one('res.partner', string='Cliente / Asociado', required=True, tracking=True)
+    contribution_type_id = fields.Many2one('contributions.manager.contribution.type', string='Tipo de Contribución', required=True, tracking=True)
+    amount = fields.Float(string='Monto del Retiro', required=True, tracking=True, help="Monto de dinero que el asociado retira de este tipo de contribución.")
+    date = fields.Date(string='Fecha del Retiro', default=fields.Date.context_today, required=True, tracking=True)
+    internal_use = fields.Boolean( string='Uso Interno', tracking=True, help="Marque esta casilla si este retiro se utilizará como pago interno.")
+    company_id = fields.Many2one('res.company', string='Empresa', required=True, default=lambda self: self.env.company, tracking=True)
     move_id = fields.Many2one('account.move', string='Asiento de Registro', readonly=True, copy=False)
+    invoice_id = fields.Many2one('account.move', string='Factura Pagada', help="Factura del mismo cliente a la que se aplicará este retiro.")
+    payment_id = fields.Many2one('account.payment', string='Pago Realizado', readonly=True, help="Pago generado con este retiro de uso interno.")
+    internal_used = fields.Boolean(string='Retiro Usado Internamente', default=False, help="Indica si este retiro de uso interno ya fue aplicado a un pago. No puede volver a utilizarse.")
+    withdrawal_status = fields.Selection([('draft', 'Borrador'), ('confirmed', 'Confirmado'), ('registered', 'Contabilizado')], string='Estado', required=True, default='draft', readonly=True, tracking=True)
     display_name = fields.Char(string='Nombre para Mostrar', compute='_compute_display_name', store=False)
-
-    allowed_contribution_type_ids = fields.Many2many(
-        'contributions.manager.contribution.type',
-        string='Tipos de Contribución Permitidos',
-        compute='_compute_allowed_contribution_types',
-        store=False
-    )
+    allowed_contribution_type_ids = fields.Many2many('contributions.manager.contribution.type', string='Tipos de Contribución Permitidos', compute='_compute_allowed_contribution_types', store=False)
 
     # Computed Methods
     @api.depends('partner_id', 'contribution_type_id', 'amount')
@@ -85,8 +54,8 @@ class Withdrawal(models.Model):
         for rec in self:
             if rec.withdrawal_status in ('confirmed', 'registered'):
                 continue
-            # if rec.amount <= 0:
-            #     raise ValidationError("El monto del retiro debe ser mayor que 0.")
+            if rec.amount <= 0:
+                raise ValidationError("El monto del retiro debe ser mayor que 0.")
 
             partner_contribution = self.env['contributions.manager.partner.contribution'].search([
                 ('partner_id', '=', rec.partner_id.id),
@@ -107,6 +76,12 @@ class Withdrawal(models.Model):
                 )
 
     # Overrides
+    @api.model
+    def create(self, vals):
+        if vals.get('reference', _('New')) == _('New'):
+            vals['reference'] = self.env['ir.sequence'].next_by_code('contributions.manager.withdrawal') or _('New')
+        return super(Withdrawal, self).create(vals)
+
     def unlink(self):
         raise ValidationError("No se puede eliminar un retiro registrado. Contacte a administración para reversas.")
 
@@ -134,10 +109,10 @@ class Withdrawal(models.Model):
                 raise ValidationError(
                     "No se encontró la relación activa entre el asociado y el tipo de contribución."
                 )
-            # if rec.amount > partner_contribution.current_amount:
-            #     raise ValidationError(
-            #         f"El monto del retiro ({rec.amount}) excede el saldo disponible ({partner_contribution.current_amount})."
-            #     )
+            if rec.amount > partner_contribution.current_amount:
+                raise ValidationError(
+                    f"El monto del retiro ({rec.amount}) excede el saldo disponible ({partner_contribution.current_amount})."
+                )
             partner_contribution.current_amount -= rec.amount
             rec.write({
                 'move_id': move.id,
@@ -157,7 +132,7 @@ class Withdrawal(models.Model):
         credit_account = contrib_type.deposit_bank_account
 
         move_vals = {
-            'ref': f"{self.partner_id.name} - {contrib_type.contribution_name} (Retiro)",
+            'ref': self.reference,
             'date': self.date,
             'journal_id': journal.id,
             'company_id': self.company_id.id,
@@ -181,3 +156,13 @@ class Withdrawal(models.Model):
         move = self.env['account.move'].create(move_vals)
         move.action_post()
         return move
+
+    def mark_as_used(self, payment, invoice=None):
+        for rec in self:
+            if rec.internal_used:
+                raise ValidationError("Este retiro ya fue utilizado internamente y no puede volver a usarse.")
+            rec.write({
+                'internal_used': True,
+                'payment_id': payment.id,
+                'invoice_id': invoice.id if invoice else False,
+            })

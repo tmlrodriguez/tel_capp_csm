@@ -4,6 +4,7 @@
         <field name="model">contributions.manager.contribution</field>
         <field name="arch" type="xml">
             <list string="Aportaciones" create="true">
+                <field name="reference"/>
                 <field name="partner_id"/>
                 <field name="contribution_type_id"/>
                 <field name="move_id"/>
@@ -41,6 +42,7 @@
 
                 <sheet>
                     <group>
+                        <field name="reference" readonly="1" />
                         <field name="partner_id"
                                required="1"
                                readonly="create_uid"
