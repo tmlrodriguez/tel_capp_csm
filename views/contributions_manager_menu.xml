@@ -1,0 +1,58 @@
+<odoo>
+
+  <menuitem id="menu_contributions_root"
+            name="Ahorros"
+            sequence="1"
+            web_icon="tel_capp_csm,static/description/icon.png"/>
+
+  <!-- Dashboard -->
+  <menuitem id="menu_dashboard"
+            name="Inicio"
+            parent="menu_contributions_root"
+            sequence="1"/>
+
+  <menuitem id="menu_dashboard_contributions"
+            name="Aportaciones"
+            parent="menu_dashboard"
+            action="action_contribution_dashboard"
+            sequence="1"/>
+
+  <menuitem id="menu_dashboard_withdrawals"
+            name="Retiros"
+            parent="menu_dashboard"
+            action="action_withdrawal_dashboard"
+            sequence="2"/>
+
+  <!-- Aportaciones y Ahorros -->
+  <menuitem id="menu_contributions_entry"
+            name="Aportaciones y Ahorros"
+            parent="menu_contributions_root"
+            action="action_contribution"
+            sequence="2"/>
+
+  <!-- Retiros -->
+  <menuitem id="menu_withdrawals_entry"
+            name="Retiros"
+            parent="menu_contributions_root"
+            action="action_withdrawal"
+            sequence="3"/>
+
+  <!-- Reportes -->
+  <menuitem id="menu_reporting_root"
+            name="Reporteria"
+            parent="menu_contributions_root"
+            sequence="4"/>
+
+  <!-- Configuracion -->
+  <menuitem id="menu_configuration_root"
+          name="Configuracion"
+          parent="menu_contributions_root"
+          sequence="5"/>
+
+  <menuitem id="menu_configuration_savings_types"
+            name="Tipos de Aportaciones y Ahorros"
+            parent="menu_configuration_root"
+            action="contributions_type_action"
+            sequence="1"/>
+
+</odoo>

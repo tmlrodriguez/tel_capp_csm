@@ -1,0 +1,17 @@
+<odoo>
+    <record id="seq_contribution_reference" model="ir.sequence">
+        <field name="name">Contribution Reference</field>
+        <field name="code">contributions.manager.contribution</field>
+        <field name="prefix">CNT-</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="1"/>
+    </record>
+
+    <record id="seq_withdrawal_reference" model="ir.sequence">
+        <field name="name">Withdrawal Reference</field>
+        <field name="code">contributions.manager.withdrawal</field>
+        <field name="prefix">WDL-</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="1"/>
+    </record>
+</odoo>
