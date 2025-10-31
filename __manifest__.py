@@ -12,11 +12,13 @@
         # Data
         'data/ir_sequence_data.xml',
         # Security
+        'security/security.xml',
         'security/ir.model.access.csv',
         # Views
         'views/res_partner_view.xml',
         'views/account_journal_view.xml',
         'views/account_payment_view.xml',
+        'views/account_payment_view_inherit_withdrawal.xml',
         'views/contributions_manager_dashboard_view.xml',
         'views/contributions_partner_contribution_popup_form.xml',
         'views/contributions_manager_contribution_types_view.xml',
