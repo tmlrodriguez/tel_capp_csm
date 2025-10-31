@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_account_payment_form_inherit_withdrawal" model="ir.ui.view">
+        <field name="name">account.payment.form.inherit.withdrawal</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/> <!-- official Odoo base view -->
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='memo']" position="after">
+                <field name="internal_withdrawal_id"
+                       readonly="1"
+                       invisible="not internal_withdrawal_id"
+                       string="Retiro de Uso Interno"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
