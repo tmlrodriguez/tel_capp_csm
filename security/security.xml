@@ -1,0 +1,29 @@
+<odoo>
+    <record id="module_category_contributions" model="ir.module.category">
+        <field name="name">Gestión de Aportaciones y Retiros</field>
+        <field name="description">Control de permisos sobre aportaciones, tipos y retiros.</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="group_contributions_user" model="res.groups">
+        <field name="name">Usuario de Contribuciones</field>
+        <field name="category_id" ref="tel_capp_csm.module_category_contributions"/>
+    </record>
+
+    <record id="group_contributions_admin" model="res.groups">
+        <field name="name">Administrador de Contribuciones</field>
+        <field name="implied_ids" eval="[(4, ref('tel_capp_csm.group_contributions_user'))]"/>
+        <field name="category_id" ref="tel_capp_csm.module_category_contributions"/>
+    </record>
+
+    <record id="group_withdrawals_user" model="res.groups">
+        <field name="name">Usuario de Retiros</field>
+        <field name="category_id" ref="tel_capp_csm.module_category_contributions"/>
+    </record>
+
+    <record id="group_withdrawals_admin" model="res.groups">
+        <field name="name">Administrador de Retiros</field>
+        <field name="implied_ids" eval="[(4, ref('tel_capp_csm.group_withdrawals_user'))]"/>
+        <field name="category_id" ref="tel_capp_csm.module_category_contributions"/>
+    </record>
+</odoo>
