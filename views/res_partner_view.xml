@@ -16,7 +16,7 @@
                 </button>
             </xpath>
             <xpath expr="//notebook" position="inside">
-                <page string="Aportaciones y Ahorros">
+                <page string="Aportaciones y Ahorros" groups="tel_capp_csm.group_contributions_user,tel_capp_csm.group_contributions_admin">
                     <header>
                         <button name="action_add_contribution"
                                 string="Agregar Aportación"
